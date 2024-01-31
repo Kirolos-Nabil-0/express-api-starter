@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model region {
+  id        Int       @id @default(autoincrement())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  servants  servant[]
+  children  Child[]
+}
+
+model servant {
+  id        Int            @id @default(autoincrement())
+  name      String         @default("")
+  regionId  Int
+  region    region         @relation(fields: [regionId], references: [id])
+  phone     String         @default("")
+  children  Childservant[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model Child {
+  id              Int               @id @default(autoincrement())
+  name            String
+  age             Int
+  address         String
+  regionId        Int
+  region          region            @relation(fields: [regionId], references: [id])
+  dadPhone        String
+  momPhone        String
+  servants        Childservant[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  childAttendance childAttendance[]
+}
+
+model Childservant {
+  id        Int     @id @default(autoincrement())
+  childId   Int
+  servantId Int
+  child     Child   @relation(fields: [childId], references: [id])
+  servant   servant @relation(fields: [servantId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([childId, servantId])
+}
+
+model childAttendance {
+  id        Int      @id @default(autoincrement())
+  childId   Int
+  Child     Child    @relation(fields: [childId], references: [id])
+  state     Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

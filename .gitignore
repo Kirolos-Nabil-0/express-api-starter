@@ -71,3 +71,11 @@ typings/
 
 # Serverless directories
 .serverless
+
+.env
+
+# ignore modules
+node_modules
+#ignore .env
+.env
+# ignore logs
